@@ -23,3 +23,13 @@ dist-ssr
 *.sln
 *.sw?
 
+# Python / Django
+/backend/venv/
+*.pyc
+__pycache__/
+.env
+db.sqlite3
+
+# Node / React
+/frontend/hotel-bordeluz-ui/node_modules/
+/frontend/hotel-bordeluz-ui/dist/
