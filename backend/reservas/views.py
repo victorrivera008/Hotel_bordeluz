@@ -1,3 +1,5 @@
+# backend/reservas/views.py (CÓDIGO COMPLETO Y SIMPLIFICADO)
+
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -8,35 +10,49 @@ from datetime import date
 from pagos.models import Transaccion 
 
 
-
+# -----------------------------------------------------------------
+# FUNCIÓN AUXILIAR (SIMPLIFICADA PARA DEPURACIÓN)
+# -----------------------------------------------------------------
 def obtener_habitaciones_disponibles(fecha_in, fecha_out):
-    reservas_conflictivas = Reserva.objects.filter(
-        Q(fecha_checkin__lt=fecha_out) & Q(fecha_checkout__gt=fecha_in)
-    ).values_list('habitacion_id', flat=True).distinct()
+    """
+    Lógica de depuración: Ignora las fechas temporalmente y devuelve
+    TODAS las habitaciones que estén marcadas como 'LIBRE'.
+    """
+    
+    # ⚠️ LÓGICA DE FECHAS DESACTIVADA TEMPORALMENTE:
+    # reservas_conflictivas = Reserva.objects.filter(
+    #     Q(fecha_checkin__lt=fecha_out) & Q(fecha_checkout__gt=fecha_in)
+    # ).values_list('habitacion_id', flat=True).distinct()
     
     habitaciones_disponibles = Habitacion.objects.filter(
-        ~Q(id__in=reservas_conflictivas),
-        estado='LIBRE' 
+        # ~Q(id__in=reservas_conflictivas),
+        estado='LIBRE' # Solo filtra por 'LIBRE'
     )
+    
+    # Imprimir en la consola del Backend qué está encontrando
+    print(f"Buscando... Se encontraron {habitaciones_disponibles.count()} habitaciones 'LIBRE'.")
+    
     return habitaciones_disponibles
 
 
-
+# -----------------------------------------------------------------
+# VISTAS DE LECTURA PÚBLICA (Se mantienen)
+# -----------------------------------------------------------------
 
 class TipoHabitacionReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
-    """API para obtener todos los tipos de habitación."""
     queryset = TipoHabitacion.objects.all()
     serializer_class = TipoHabitacionSerializer
     permission_classes = [permissions.AllowAny]
 
 class ServicioReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
-    """API para obtener todos los servicios adicionales."""
     queryset = Servicio.objects.all()
     serializer_class = ServicioSerializer
     permission_classes = [permissions.AllowAny]
 
 
-
+# -----------------------------------------------------------------
+# VISTA DE RESERVAS (Lógica Transaccional)
+# -----------------------------------------------------------------
 class ReservaViewSet(viewsets.ModelViewSet):
     queryset = Reserva.objects.all() 
     serializer_class = ReservaSerializer
@@ -49,6 +65,7 @@ class ReservaViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
 
+    # Endpoint 1: GET /api/reservas/disponibilidad/
     @action(detail=False, methods=['get'], url_path='disponibilidad')
     def get_disponibilidad(self, request):
         fecha_checkin_str = request.query_params.get('check_in')
@@ -63,13 +80,16 @@ class ReservaViewSet(viewsets.ModelViewSet):
         except ValueError:
              return Response({'error': 'Formato de fecha inválido (YYYY-MM-DD).'}, status=status.HTTP_400_BAD_REQUEST)
         
+        # ⚠️ LLAMADA A LA FUNCIÓN SIMPLIFICADA
         habitaciones = obtener_habitaciones_disponibles(fecha_checkin, fecha_checkout) 
         
         serializer = HabitacionDisponibleSerializer(habitaciones, many=True)
         return Response(serializer.data)
         
     
+    # Endpoint 2: POST /api/reservas/ (Se mantiene igual)
     def create(self, request, *args, **kwargs):
+        # ... (La lógica de creación de reserva se mantiene) ...
         serializer = self.get_serializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save() 

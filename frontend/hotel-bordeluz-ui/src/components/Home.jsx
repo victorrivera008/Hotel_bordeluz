@@ -21,7 +21,7 @@ const style = {
         display: 'inline-block',
     },
     heroSection: {
-        height: '600px',
+        height: '700px',
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'center',
@@ -29,7 +29,7 @@ const style = {
         backgroundImage: 'url(https://www.hotelbordeluz.cl/en/wp-content/uploads/2020/11/slide-h.jpg)', 
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        marginBottom: '40px', 
+        marginBottom: '0px', 
     },
     heroOverlay: {
         position: 'absolute',

@@ -1,7 +1,10 @@
+// frontend/hotel-bordeluz-ui/src/components/ServicesPage.jsx
+
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { FaSpa, FaUtensils, FaCocktail, FaRegCalendarCheck, FaEuroSign } from 'react-icons/fa';
 
+// --- Estilos para la página de servicios ---
 const style = {
     container: {
         maxWidth: '1200px',
@@ -126,7 +129,7 @@ const ServicesPage = () => {
                             <h2 style={style.serviceTitle}>
                                 {service.serviceIcon} <span style={{ marginLeft: '10px' }}>{service.nombre}</span>
                             </h2>
-                            <p style={{ color: '#666', marginBottom: '15px' }}>{service.descripcion || "Servicio disponible para reserva o consumo inmediato."}</p>
+                            {/* ⚠️ CORREGIDO: Eliminamos la línea de 'service.descripcion' */}
                         </div>
                         <div style={style.priceTag}>
                             {formatPrice(service.precio)}

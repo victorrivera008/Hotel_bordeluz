@@ -15,7 +15,7 @@ class RegistroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = ['username', 'email', 'password', 'first_name', 'last_name', 'telefono']
-        
+    
     def create(self, validated_data):
         username = validated_data.pop('username')
         password = validated_data.pop('password')
@@ -23,7 +23,10 @@ class RegistroSerializer(serializers.ModelSerializer):
         user = Usuario.objects.create_user(
             username=username,
             password=password,
-            **validated_data 
+            email=validated_data.get('email', ''),
+            first_name=validated_data.get('first_name', ''),
+            last_name=validated_data.get('last_name', ''),
+            telefono=validated_data.get('telefono', '')
         )
         
         try:
@@ -34,3 +37,12 @@ class RegistroSerializer(serializers.ModelSerializer):
             print("ADVERTENCIA: Rol 'Cliente' (ID 4) no encontrado.")
 
         return user
+
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Usuario
+        fields = ['username', 'email', 'first_name', 'last_name', 'telefono']
+        read_only_fields = ['username']

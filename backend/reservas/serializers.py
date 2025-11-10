@@ -1,37 +1,36 @@
+# backend/reservas/serializers.py (CÓDIGO COMPLETO)
+
 from rest_framework import serializers
 from .models import TipoHabitacion, Habitacion, Servicio, Reserva, ItemServicioReserva
 from django.db import transaction
 from datetime import date
 
-
+# ---------------------------------------------------------
+# SERIALIZADORES DE CONTENIDO (ACTUALIZADOS)
+# ---------------------------------------------------------
 
 class TipoHabitacionSerializer(serializers.ModelSerializer):
-    """Muestra solo los campos que existen en el modelo (corregido)."""
     class Meta:
         model = TipoHabitacion
-        fields = [
-            'id', 'nombre', 'precio_base', 'capacidad_maxima'
-        ]
+        fields = ['id', 'nombre', 'precio_base', 'capacidad_maxima']
 
 class ServicioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Servicio
-        fields = ['id', 'nombre', 'precio', 'descripcion']
+        # ⚠️ CORREGIDO: Eliminamos 'descripcion'
+        fields = ['id', 'nombre', 'precio']
 
-
-
+# ... (El resto del archivo, HabitacionDisponibleSerializer, ReservaSerializer, etc., se mantiene igual) ...
+# -----------------------------------------------------------------
+# SERIALIZADORES DE RESERVA (Se mantienen igual)
+# -----------------------------------------------------------------
 
 class HabitacionDisponibleSerializer(serializers.ModelSerializer):
-    """
-    Este es el 'traductor' que usa RoomList.jsx. 
-    Debe incluir 'tipo_detalle'.
-    """
     tipo_detalle = TipoHabitacionSerializer(source='tipo', read_only=True) 
 
     class Meta:
         model = Habitacion
         fields = ['id', 'numero', 'estado', 'tipo', 'tipo_detalle']
-
 
 class ItemServicioReservaSerializer(serializers.ModelSerializer):
     servicio_id = serializers.IntegerField(write_only=True)
@@ -40,9 +39,7 @@ class ItemServicioReservaSerializer(serializers.ModelSerializer):
         model = ItemServicioReserva
         fields = ['servicio_id', 'cantidad']
 
-
 class ReservaSerializer(serializers.ModelSerializer):
-    """Usado para el POST (crear la reserva)."""
     servicios = ItemServicioReservaSerializer(many=True, required=False)
     
     class Meta:

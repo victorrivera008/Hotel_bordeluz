@@ -50,7 +50,9 @@ INSTALLED_APPS = [
 ]
 AUTH_USER_MODEL = 'usuarios.Usuario'
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173", 
+    "http://localhost:5174", 
+    "http://127.0.0.1:5174",
+    "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
 CORS_ALLOW_CREDENTIALS = True
@@ -87,8 +89,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware', 
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # Debe estar ANTES de CommonMiddleware
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -100,6 +102,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',

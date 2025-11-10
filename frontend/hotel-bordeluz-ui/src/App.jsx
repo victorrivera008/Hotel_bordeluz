@@ -1,3 +1,5 @@
+// frontend/hotel-bordeluz-ui/src/App.jsx (CÓDIGO COMPLETO Y FINAL)
+
 import React, { useState, useEffect } from 'react';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -6,6 +8,8 @@ import AuthModalContent from './components/AuthModalContent';
 import DashboardEjecutivo from './components/DashboardEjecutivo'; 
 import RoomsPage from './components/RoomsPage'; 
 import ServicesPage from './components/ServicesPage'; 
+import BookingPage from './components/BookingPage'; 
+import ProfilePage from './components/ProfilePage'; 
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 
@@ -28,7 +32,6 @@ const modalStyle = {
 
 const BREAKPOINT = 900; 
 
-
 const AppContent = () => {
     const [currentPage, setCurrentPage] = useState('Home');
     const [showLogin, setShowLogin] = useState(false);
@@ -39,14 +42,12 @@ const AppContent = () => {
     const isStaff = isAuthenticated && userInfo?.rol !== 'Cliente';
 
     useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < BREAKPOINT);
-        };
+        const handleResize = () => setIsMobile(window.innerWidth < BREAKPOINT);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-
+    
     if (loading) {
         return (
             <div style={{
@@ -65,7 +66,14 @@ const AppContent = () => {
 
     const renderContent = () => {
         if (isStaff) {
-            return <DashboardEjecutivo />;
+            switch (currentPage) {
+                case 'Profile':
+                    return <ProfilePage />;
+                case 'Home': 
+                default:
+                    if(currentPage === 'Home') setCurrentPage('Dashboard'); 
+                    return <DashboardEjecutivo />;
+            }
         }
         
         switch (currentPage) {
@@ -82,6 +90,9 @@ const AppContent = () => {
                         <p>Información de contacto, formulario de contacto y mapa.</p>
                     </div>
                  );
+            case 'Profile':
+                return isAuthenticated ? <ProfilePage /> : <Home triggerLogin={() => setShowLogin(true)} />;
+            
             case 'Home':
             default:
                 return <Home triggerLogin={() => setShowLogin(true)} />;
